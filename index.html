@@ -2,14 +2,20 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Локальный Музыкальный Плеер</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Музыкальный Плеер</title>
+
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Плеер">
+
   <style>
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      -webkit-tap-highlight-color: transparent;
     }
 
     body {
@@ -64,14 +70,12 @@
       margin-top: 4px;
     }
 
-    /* Стилизация встроенного аудиоплеера */
     audio {
       width: 100%;
       margin-bottom: 20px;
       outline: none;
     }
 
-    /* Кнопка добавления файлов */
     .file-input-label {
       display: block;
       text-align: center;
@@ -93,7 +97,6 @@
       display: none;
     }
 
-    /* Плейлист */
     .playlist-title {
       font-size: 14px;
       color: #94a3b8;
@@ -201,14 +204,12 @@
       audio.src = objectURL;
       title.textContent = file.name;
 
-      // Обновляем подсветку в плейлисте
       const items = playlistUI.querySelectorAll('li');
       items.forEach((item, i) => {
         item.classList.toggle('active', i === index);
       });
     }
 
-    // Автопереключение на следующий трек
     audio.addEventListener('ended', () => {
       if (currentIndex + 1 < playlist.length) {
         currentIndex++;
