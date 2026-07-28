@@ -3,27 +3,26 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Плеер</title>
+  <title>音楽 — Плеер</title>
 
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Плеер">
   <meta name="mobile-web-app-capable" content="yes">
-
-  <link rel="manifest" href='data:application/manifest+json,{"name":"Плеер","short_name":"Плеер","start_url":".","display":"standalone","background_color":"#0f172a","theme_color":"#0f172a"}'>
+  <link rel="manifest" href='data:application/manifest+json,{"name":"Плеер","short_name":"Плеер","start_url":".","display":"standalone","background_color":"#09090b","theme_color":"#09090b"}'>
 
   <style>
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
       -webkit-tap-highlight-color: transparent;
     }
 
     body {
-      background: #0f172a;
-      color: #f8fafc;
+      background: #09090b;
+      color: #f4f4f5;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -31,136 +30,225 @@
       padding: 20px;
       padding-top: env(safe-area-inset-top);
       padding-bottom: env(safe-area-inset-bottom);
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Фоновые атмосферные элементы */
+    .bg-kanji {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 280px;
+      font-weight: 900;
+      color: rgba(255, 255, 255, 0.02);
+      pointer-events: none;
+      user-select: none;
+      z-index: 0;
     }
 
     .player-card {
-      background: #1e293b;
+      position: relative;
+      z-index: 1;
+      background: rgba(18, 18, 20, 0.75);
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
       width: 100%;
-      max-width: 400px;
-      padding: 25px;
-      border-radius: 24px;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      max-width: 380px;
+      padding: 28px;
+      border-radius: 32px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8),
+                  inset 0 1px 0 rgba(255, 255, 255, 0.1);
     }
 
-    .cover {
-      width: 160px;
-      height: 160px;
-      margin: 0 auto 20px;
-      background: linear-gradient(135deg, #a855f7, #6366f1);
-      border-radius: 20px;
+    /* Заголовок с кандзи */
+    .app-header {
       display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      font-size: 12px;
+      letter-spacing: 2px;
+      color: #71717a;
+      text-transform: uppercase;
+    }
+
+    .app-header span {
+      color: #e4e4e7;
+      font-weight: 600;
+    }
+
+    /* Обложка */
+    .cover {
+      width: 190px;
+      height: 190px;
+      margin: 0 auto 24px;
+      background: radial-gradient(circle at 30% 30%, #27272a, #09090b);
+      border-radius: 24px;
+      display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      font-size: 60px;
-      box-shadow: 0 10px 25px rgba(168, 85, 247, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cover-kanji {
+      font-size: 64px;
+      color: #f4f4f5;
+      text-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+    }
+
+    .cover-sub {
+      font-size: 10px;
+      letter-spacing: 3px;
+      color: #a1a1aa;
+      margin-top: 6px;
     }
 
     .track-info {
       text-align: center;
-      margin-bottom: 20px;
+      margin-bottom: 22px;
     }
 
     .track-title {
-      font-size: 18px;
-      font-weight: 700;
+      font-size: 19px;
+      font-weight: 600;
+      color: #fafafa;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
 
     .track-artist {
-      font-size: 14px;
-      color: #94a3b8;
+      font-size: 13px;
+      color: #71717a;
       margin-top: 4px;
+      letter-spacing: 0.5px;
     }
 
     audio {
       width: 100%;
-      margin-bottom: 20px;
-      outline: none;
+      margin-bottom: 22px;
+      filter: invert(0.9) hue-rotate(180deg);
+      opacity: 0.85;
     }
 
+    /* Кнопка выбора */
     .file-input-label {
-      display: block;
-      text-align: center;
-      background: linear-gradient(135deg, #a855f7, #6366f1);
-      color: white;
-      padding: 12px 20px;
-      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      background: #f4f4f5;
+      color: #09090b;
+      padding: 14px 20px;
+      border-radius: 16px;
       font-weight: 600;
+      font-size: 14px;
       cursor: pointer;
-      transition: transform 0.2s, opacity 0.2s;
-      margin-bottom: 20px;
+      transition: all 0.2s ease;
+      margin-bottom: 22px;
+      box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1);
     }
 
     .file-input-label:active {
-      transform: scale(0.98);
+      transform: scale(0.97);
+      background: #e4e4e7;
     }
 
     input[type="file"] {
       display: none;
     }
 
-    .playlist-title {
-      font-size: 14px;
-      color: #94a3b8;
-      margin-bottom: 10px;
+    /* Плейлист */
+    .playlist-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: #71717a;
+      margin-bottom: 12px;
       text-transform: uppercase;
-      letter-spacing: 1px;
+      letter-spacing: 1.5px;
     }
 
     .playlist {
       list-style: none;
-      max-height: 150px;
+      max-height: 140px;
       overflow-y: auto;
-      border-radius: 12px;
-      background: #0f172a;
-      padding: 8px;
+      border-radius: 16px;
+      background: rgba(0, 0, 0, 0.3);
+      padding: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.03);
+    }
+
+    .playlist::-webkit-scrollbar {
+      width: 4px;
+    }
+    .playlist::-webkit-scrollbar-thumb {
+      background: #27272a;
+      border-radius: 4px;
     }
 
     .playlist li {
-      padding: 10px 12px;
-      border-radius: 8px;
-      font-size: 14px;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-size: 13px;
       cursor: pointer;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      transition: background 0.2s;
+      color: #a1a1aa;
+      transition: all 0.2s;
     }
 
     .playlist li:hover {
       background: rgba(255, 255, 255, 0.05);
+      color: #f4f4f5;
     }
 
     .playlist li.active {
-      background: rgba(168, 85, 247, 0.2);
-      color: #c084fc;
+      background: rgba(255, 255, 255, 0.1);
+      color: #ffffff;
       font-weight: 600;
+      border-left: 2px solid #ffffff;
     }
   </style>
 </head>
 <body>
 
+  <div class="bg-kanji">音</div>
+
   <div class="player-card">
-    <div class="cover">🎧</div>
+    <div class="app-header">
+      <span>オーディオ</span> <div>再生中</div> </div>
+
+    <div class="cover">
+      <div class="cover-kanji">響</div> <div class="cover-sub">SOUND PLAYER</div>
+    </div>
 
     <div class="track-info">
-      <div class="track-title" id="title">Выберите музыку</div>
-      <div class="track-artist" id="artist">Локальный файл</div>
+      <div class="track-title" id="title">Выберите трек</div>
+      <div class="track-artist" id="artist">ローカルファイル • Local</div>
     </div>
 
     <audio id="audio" controls></audio>
 
     <label class="file-input-label" for="file-input">
-      📂 Выбрать треки с устройства
+      <span>曲を選択</span> • Выбрать треки
     </label>
     <input type="file" id="file-input" accept="audio/*" multiple>
 
-    <div class="playlist-title">Плейлист</div>
+    <div class="playlist-header">
+      <span>Плейлист</span>
+      <span>プレイリスト</span>
+    </div>
     <ul class="playlist" id="playlist">
-      <li style="color: #64748b; cursor: default;">Список пуст</li>
+      <li style="color: #52525b; cursor: default;">Список пуст</li>
     </ul>
   </div>
 
